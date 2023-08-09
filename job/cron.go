@@ -17,7 +17,7 @@ var (
 	AbormalResult []string
 )
 
-const p = "pause"
+//const p = "pause"
 
 var (
 	Status int //0: start 1:pause
