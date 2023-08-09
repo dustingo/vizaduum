@@ -19,13 +19,21 @@ var (
 
 const p = "pause"
 
-var wg sync.WaitGroup
+var (
+	Status int //0: start 1:pause
+	wg     sync.WaitGroup
+)
 
 func RunCheck() {
 	defer func() {
 		AbormalResult = []string{}
 	}()
+
 	level.Info(logging.Logger).Log("msg", "run vizaduum task")
+	if Status == 1 {
+		level.Info(logging.Logger).Log("msg", "维护中,不报警")
+		return
+	}
 	for _, service := range config.GConfig.GameConfig.Service {
 		wg.Add(1)
 		if strings.ToLower(service.Method) == "port" {
@@ -45,10 +53,10 @@ func RunCheck() {
 		level.Error(logging.Logger).Log("err", err)
 		return
 	}
-	if strings.Contains(string(dataByte), p) {
-		level.Warn(logging.Logger).Log("msg", "维护时间段，不报警")
-		return
-	}
+	// if strings.Contains(string(dataByte), p) {
+	// 	level.Warn(logging.Logger).Log("msg", "维护时间段，不报警")
+	// 	return
+	// }
 	// 当没有报警的时候每次都把报警文件清空，以防干扰
 	if len(AbormalResult) == 0 {
 		os.Truncate(config.GConfig.GameConfig.Program.File, 0)
