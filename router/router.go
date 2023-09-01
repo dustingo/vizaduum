@@ -19,6 +19,7 @@ func Setup() *gin.Engine {
 	r.Use(gin.Recovery())
 	// r.GET("/debug/pprof/*any", gin.WrapH(http.DefaultServeMux))
 	apiv1 := r.Group("/api/v1")
+	apiv1.GET("/health", service.HealthCheck)
 	apiv1.GET("/display", service.Display)
 	apiv1.POST("/pause", service.Pause)
 	apiv1.POST("/start", service.Start)

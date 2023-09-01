@@ -7,6 +7,7 @@ import (
 	"vizaduum/flags"
 	"vizaduum/job"
 	"vizaduum/logging"
+	"vizaduum/pkg/register"
 	"vizaduum/router"
 
 	"github.com/gin-gonic/gin"
@@ -23,6 +24,7 @@ func main() {
 	config.Setup(flags.ConsulAddr, flags.ConsulToken, flags.GameKey, flags.SysKey)
 	job.FileExist()
 	go config.GameWatcher()
+	go register.ServiceRegister()
 	c := cron.New(cron.WithSeconds(), cron.WithChain(cron.SkipIfStillRunning(cron.DefaultLogger)))
 	_, err := c.AddFunc(fmt.Sprintf("@every %dm", config.GConfig.GameConfig.Program.Interval), job.RunCheck)
 	if err != nil {
